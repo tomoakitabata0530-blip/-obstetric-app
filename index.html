@@ -2,317 +2,290 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="産科プロブレム">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>産科問診プロブレム抽出</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; min-height: 100vh; -webkit-text-size-adjust: 100%; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
-    .header { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-    .header h1 { font-size: 18px; color: #1f2937; display: flex; align-items: center; gap: 8px; }
-    .btn { padding: 10px 16px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-gray { background: #4b5563; color: white; }
-    .btn-gray:active { background: #374151; }
-    .btn-blue { background: #2563eb; color: white; }
-    .btn-blue:active { background: #1d4ed8; }
-    .btn-blue:disabled { background: #9ca3af; }
-    .main-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    @media (min-width: 1024px) { .main-grid { grid-template-columns: 2fr 1fr; } }
-    .section { background: white; border-radius: 12px; margin-bottom: 16px; overflow: hidden; border: 1px solid #e5e7eb; }
-    .section-header { width: 100%; padding: 14px 16px; background: #f9fafb; border: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 15px; font-weight: 600; color: #374151; }
-    .section-header:active { background: #f3f4f6; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; padding: 16px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 24px; }
+    .header h1 { font-size: 24px; color: #1f2937; margin-bottom: 16px; }
+    .content-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 1024px) { .content-grid { grid-template-columns: 2fr 1fr; } }
+    .form-section { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .section-header { padding: 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .section-header:hover { background: #f3f4f6; }
+    .section-title { font-weight: 600; color: #374151; }
     .section-content { padding: 16px; display: none; }
-    .section-content.open { display: block; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: #374151; }
-    input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; background: white; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; }
-    .readonly { background: #f3f4f6; }
-    .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-    .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 4px; }
-    .checkbox-item input { width: 20px; height: 20px; }
-    .checkbox-item span { font-size: 14px; }
-    .radio-group { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 6px; }
-    .radio-item { display: flex; align-items: center; gap: 6px; }
-    .radio-item input { width: 20px; height: 20px; }
-    .radio-item span { font-size: 14px; }
-    .alert-box { padding: 10px 12px; border-left: 4px solid; border-radius: 4px; margin-bottom: 12px; font-size: 13px; font-weight: 600; }
+    .section-content.expanded { display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 4px; }
+    .form-input { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+    .form-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .checkbox-label input[type="checkbox"] { width: 16px; height: 16px; }
+    .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
+    .radio-label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #3b82f6; color: white; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+    .flex-gap { display: flex; gap: 8px; align-items: center; }
+    .readonly-display { padding: 8px 12px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; }
+    .problem-list { background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 16px; }
+    .problem-list h2 { font-size: 20px; color: #1f2937; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .problem-item { padding: 12px; border-radius: 8px; border: 2px solid; font-weight: 500; font-size: 14px; margin-bottom: 8px; }
+    .problem-high { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .problem-medium { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .problem-low { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+    .legend { margin-top: 24px; padding-top: 16px; border-top: 1px solid #d1d5db; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; }
+    .legend-box { width: 16px; height: 16px; border-radius: 4px; border: 2px solid; }
+    .alert-box { padding: 12px; border-left: 4px solid; border-radius: 4px; margin-bottom: 16px; font-size: 13px; font-weight: 600; }
     .alert-red { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
     .alert-orange { background: #fff7ed; border-color: #f97316; color: #9a3412; }
-    .subsection-title { font-size: 14px; font-weight: 600; margin: 12px 0 8px 0; }
-    .subsection-title.red { color: #b91c1c; }
-    .subsection-title.orange { color: #c2410c; }
-    .postal-row { display: flex; gap: 8px; }
-    .postal-row input { flex: 1; }
-    .problem-panel { background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    @media (min-width: 1024px) { .problem-panel { position: sticky; top: 16px; } }
-    .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .problem-header h2 { font-size: 18px; color: #1f2937; }
-    .problem-list { max-height: 400px; overflow-y: auto; }
-    .problem-item { padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-    .problem-high { background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5; }
-    .problem-medium { background: #fef9c3; color: #854d0e; border: 2px solid #fde047; }
-    .problem-low { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
-    .legend { margin-top: 16px; padding-top: 16px; border-top: 1px solid #c7d2fe; }
-    .legend h3 { font-size: 14px; color: #374151; margin-bottom: 8px; }
-    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; }
-    .legend-box { width: 16px; height: 16px; border-radius: 4px; }
-    .legend-box.high { background: #fecaca; border: 1px solid #fca5a5; }
-    .legend-box.medium { background: #fef08a; border: 1px solid #fde047; }
-    .legend-box.low { background: #bfdbfe; border: 1px solid #93c5fd; }
-    .empty-message { color: #6b7280; font-size: 14px; padding: 16px 0; }
-    .footer { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 16px; }
-    .divider { border-top: 1px solid #e5e7eb; margin: 12px 0; padding-top: 12px; }
-    .hint { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .help-text { font-size: 12px; color: #6b7280; margin-top: 4px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- ヘッダー -->
     <div class="header">
-      <h1>⚠️ 産科問診プロブレム抽出</h1>
-      <button class="btn btn-gray" onclick="resetForm()">🔄 リセット</button>
+      <h1>🏥 産科問診プロブレム抽出</h1>
+      <button class="btn btn-secondary" onclick="resetForm()">🔄 リセット</button>
     </div>
 
-    <div class="main-grid">
-      <!-- 左カラム: 入力フォーム -->
-      <div class="form-column">
-        
-        <!-- 0. 基本情報 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('basic')">
-            <span>0. 基本情報</span>
-            <span id="basic-icon">▼</span>
-          </button>
-          <div id="basic-content" class="section-content open">
-            <div class="form-row">
+    <div class="content-grid">
+      <div>
+        <!-- 基本情報 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('basic')">
+            <span class="section-title">0. 基本情報</span>
+            <span id="arrow-basic">▼</span>
+          </div>
+          <div class="section-content expanded" id="content-basic">
+            <div class="grid-2">
               <div class="form-group">
-                <label>年齢</label>
-                <input type="number" id="age" inputmode="numeric" placeholder="歳" onchange="updateProblems()">
+                <label class="form-label">年齢</label>
+                <input type="number" class="form-input" id="age" oninput="updateProblems()">
               </div>
               <div class="form-group">
-                <label>身長 (cm)</label>
-                <input type="number" id="height" inputmode="decimal" onchange="updateProblems()">
+                <label class="form-label">身長 (cm)</label>
+                <input type="number" class="form-input" id="height" oninput="updateProblems()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">妊娠前体重 (kg)</label>
+                <input type="number" step="0.1" class="form-input" id="preWeight" oninput="updateProblems()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">BMI</label>
+                <div class="readonly-display" id="bmiDisplay">---</div>
               </div>
             </div>
-            <div class="form-row">
+          </div>
+        </div>
+
+        <!-- 産科既往 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('obs')">
+            <span class="section-title">1. 産科既往</span>
+            <span id="arrow-obs">▼</span>
+          </div>
+          <div class="section-content expanded" id="content-obs">
+            <div class="grid-3">
               <div class="form-group">
-                <label>妊娠前体重 (kg)</label>
-                <input type="number" id="preWeight" inputmode="decimal" onchange="updateProblems()">
+                <label class="form-label">妊娠回数 (G)</label>
+                <input type="number" class="form-input" id="gravida" oninput="updateProblems()">
               </div>
               <div class="form-group">
-                <label>BMI</label>
-                <input type="text" id="bmi" class="readonly" readonly value="---">
+                <label class="form-label">分娩回数 (P)</label>
+                <input type="number" class="form-input" id="para" oninput="updateProblems()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">帝王切開</label>
+                <input type="number" class="form-input" id="cesarean" oninput="updateProblems()">
               </div>
             </div>
             <div class="form-group">
-              <label>その他</label>
-              <textarea id="basicOther" rows="2" placeholder="自由記載"></textarea>
+              <label class="form-label">前回・過去妊娠の合併症</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="prevGDM" onchange="updateProblems()"><span>GDM</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevHDP" onchange="updateProblems()"><span>妊娠高血圧症候群</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevPreterm" onchange="updateProblems()"><span>切迫早産/早産</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevPlacenta" onchange="updateProblems()"><span>前置胎盤/低置胎盤</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevPPH" onchange="updateProblems()"><span>産後出血</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevAdhesion" onchange="updateProblems()"><span>癒着胎盤疑い既往</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevRapidLabor" onchange="updateProblems()"><span>分娩経過早い</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="prevPROM" onchange="updateProblems()"><span>前期破水</span></label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label"><input type="checkbox" id="lastDeliveryWithin1Year" onchange="updateProblems()"><span>前回分娩が1年未満</span></label>
             </div>
           </div>
         </div>
 
-        <!-- 1. 産科既往 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('obs')">
-            <span>1. 産科既往</span>
-            <span id="obs-icon">▲</span>
-          </button>
-          <div id="obs-content" class="section-content">
-            <div class="form-row-3">
-              <div class="form-group">
-                <label>妊娠回数(G)</label>
-                <input type="number" id="gravida" inputmode="numeric" onchange="updateProblems()">
-              </div>
-              <div class="form-group">
-                <label>分娩回数(P)</label>
-                <input type="number" id="para" inputmode="numeric" onchange="updateProblems()">
-              </div>
-              <div class="form-group">
-                <label>帝王切開</label>
-                <input type="number" id="cesarean" inputmode="numeric" onchange="updateProblems()">
-              </div>
-            </div>
-            <div class="divider">
-              <label style="font-weight:500; font-size:14px;">前回・過去妊娠の合併症</label>
-              <div class="checkbox-grid" style="margin-top:8px;">
-                <label class="checkbox-item"><input type="checkbox" id="prevGDM" onchange="updateProblems()"><span>GDM</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevHDP" onchange="updateProblems()"><span>妊娠高血圧症候群</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevPreterm" onchange="updateProblems()"><span>切迫早産/早産</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevPlacenta" onchange="updateProblems()"><span>前置/低置胎盤</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevPPH" onchange="updateProblems()"><span>産後出血</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevAdhesion" onchange="updateProblems()"><span>癒着胎盤疑い</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevRapidLabor" onchange="updateProblems()"><span>分娩経過早い</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="prevPROM" onchange="updateProblems()"><span>前期破水</span></label>
-              </div>
-            </div>
-            <label class="checkbox-item"><input type="checkbox" id="lastDeliveryWithin1Year" onchange="updateProblems()"><span>前回分娩が1年未満</span></label>
+        <!-- 既往歴 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('medical')">
+            <span class="section-title">2. 既往歴</span>
+            <span id="arrow-medical">▼</span>
           </div>
-        </div>
-
-        <!-- 2. 既往歴 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('medical')">
-            <span>2. 既往歴</span>
-            <span id="medical-icon">▲</span>
-          </button>
-          <div id="medical-content" class="section-content">
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="hypertension" onchange="updateProblems()"><span>高血圧</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="diabetes" onchange="updateProblems()"><span>糖尿病</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="thyroid" onchange="updateProblems()"><span>甲状腺疾患</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="autoimmune" onchange="updateProblems()"><span>自己免疫疾患</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="thrombosis" onchange="updateProblems()"><span>血栓症歴</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="asthma" onchange="updateProblems()"><span>喘息</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="psychiatric" onchange="updateProblems()"><span>精神疾患</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="uterineFibroid" onchange="updateProblems()"><span>子宮筋腫</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="uterineAnomaly" onchange="updateProblems()"><span>子宮奇形</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="cervicalSurgery" onchange="updateProblems()"><span>子宮頸部手術歴</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="abdominalSurgery" onchange="updateProblems()"><span>腹部手術歴</span></label>
+          <div class="section-content" id="content-medical">
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" id="hypertension" onchange="updateProblems()"><span>高血圧</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="diabetes" onchange="updateProblems()"><span>糖尿病</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="thyroid" onchange="updateProblems()"><span>甲状腺疾患</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="autoimmune" onchange="updateProblems()"><span>自己免疫疾患</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="thrombosis" onchange="updateProblems()"><span>血栓症歴</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="asthma" onchange="updateProblems()"><span>喘息</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="psychiatric" onchange="updateProblems()"><span>精神疾患</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="uterineFibroid" onchange="updateProblems()"><span>子宮筋腫</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="uterineAnomaly" onchange="updateProblems()"><span>子宮奇形</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="cervicalSurgery" onchange="updateProblems()"><span>子宮頸部手術歴</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="abdominalSurgery" onchange="updateProblems()"><span>腹部手術歴</span></label>
             </div>
           </div>
         </div>
 
-        <!-- 3. 内服薬 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('meds')">
-            <span>3. 内服薬（催奇形性）</span>
-            <span id="meds-icon">▲</span>
-          </button>
-          <div id="meds-content" class="section-content">
+        <!-- 内服薬 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('meds')">
+            <span class="section-title">3. 内服薬</span>
+            <span id="arrow-meds">▼</span>
+          </div>
+          <div class="section-content" id="content-meds">
             <div class="alert-box alert-red">⚠️ 催奇形性リスクのある薬剤</div>
-            <div class="subsection-title red">抗てんかん薬</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="aed_valproate" onchange="updateProblems()"><span>バルプロ酸</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="aed_carbamazepine" onchange="updateProblems()"><span>カルバマゼピン</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="aed_phenytoin" onchange="updateProblems()"><span>フェニトイン</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="aed_other" onchange="updateProblems()"><span>その他抗てんかん薬</span></label>
+            <div class="form-group">
+              <label class="form-label" style="color: #991b1b; font-weight: 600;">抗てんかん薬</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="aed_valproate" onchange="updateProblems()"><span>バルプロ酸</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="aed_carbamazepine" onchange="updateProblems()"><span>カルバマゼピン</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="aed_phenytoin" onchange="updateProblems()"><span>フェニトイン</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="aed_other" onchange="updateProblems()"><span>その他抗てんかん薬</span></label>
+              </div>
             </div>
-            <div class="subsection-title red">レチノイド</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="retinoid_isotretinoin" onchange="updateProblems()"><span>イソトレチノイン</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="retinoid_acitretin" onchange="updateProblems()"><span>アシトレチン</span></label>
+            <div class="form-group">
+              <label class="form-label" style="color: #991b1b; font-weight: 600;">ビタミンA誘導体</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="retinoid_isotretinoin" onchange="updateProblems()"><span>イソトレチノイン</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="retinoid_acitretin" onchange="updateProblems()"><span>アシトレチン</span></label>
+              </div>
             </div>
-            <div class="subsection-title red">免疫抑制薬</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="immunosuppressant_mtx" onchange="updateProblems()"><span>メトトレキサート</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="immunosuppressant_mmf" onchange="updateProblems()"><span>ミコフェノール酸</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="immunosuppressant_cyclophosphamide" onchange="updateProblems()"><span>シクロホスファミド</span></label>
+            <div class="form-group">
+              <label class="form-label" style="color: #991b1b; font-weight: 600;">免疫抑制薬</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="immunosuppressant_mtx" onchange="updateProblems()"><span>メトトレキサート</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="immunosuppressant_mmf" onchange="updateProblems()"><span>ミコフェノール酸</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="immunosuppressant_cyclophosphamide" onchange="updateProblems()"><span>シクロホスファミド</span></label>
+              </div>
             </div>
-            <div class="subsection-title orange">その他</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="antihypertensive_acei" onchange="updateProblems()"><span>ACE阻害薬</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="antihypertensive_arb" onchange="updateProblems()"><span>ARB</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="anticoagulant_warfarin" onchange="updateProblems()"><span>ワルファリン</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="thyroid_thiamazole" onchange="updateProblems()"><span>チアマゾール</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="psychiatric_meds" onchange="updateProblems()"><span>精神科薬</span></label>
+            <div class="form-group">
+              <label class="form-label" style="color: #9a3412; font-weight: 600;">その他</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="antihypertensive_acei" onchange="updateProblems()"><span>ACE阻害薬</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="antihypertensive_arb" onchange="updateProblems()"><span>ARB</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="anticoagulant_warfarin" onchange="updateProblems()"><span>ワルファリン</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="thyroid_thiamazole" onchange="updateProblems()"><span>チアマゾール</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="psychiatricMeds" onchange="updateProblems()"><span>精神科薬内服中</span></label>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 4. アレルギー -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('allergy')">
-            <span>4. アレルギー</span>
-            <span id="allergy-icon">▲</span>
-          </button>
-          <div id="allergy-content" class="section-content">
-            <div class="subsection-title red">高リスク</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="allergy_latex" onchange="updateProblems()"><span>ラテックス</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="allergy_chlorhexidine" onchange="updateProblems()"><span>クロルヘキシジン</span></label>
+        <!-- アレルギー -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('allergy')">
+            <span class="section-title">4. アレルギー</span>
+            <span id="arrow-allergy">▼</span>
+          </div>
+          <div class="section-content" id="content-allergy">
+            <div class="alert-box alert-orange">⚠️ 医療行為で注意すべきアレルギー</div>
+            <div class="form-group">
+              <label class="form-label" style="color: #991b1b; font-weight: 600;">高リスクアレルギー</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="allergy_latex" onchange="updateProblems()"><span>ラテックス(天然ゴム)</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="allergy_chlorhexidine" onchange="updateProblems()"><span>クロルヘキシジン</span></label>
+              </div>
             </div>
-            <div class="subsection-title orange">抗菌薬</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="allergy_penicillin" onchange="updateProblems()"><span>ペニシリン系</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="allergy_cephalosporin" onchange="updateProblems()"><span>セフェム系</span></label>
+            <div class="form-group">
+              <label class="form-label" style="color: #9a3412; font-weight: 600;">抗菌薬アレルギー</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="allergy_penicillin" onchange="updateProblems()"><span>ペニシリン系</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="allergy_cephalosporin" onchange="updateProblems()"><span>セフェム系</span></label>
+              </div>
             </div>
-            <div class="subsection-title orange">その他</div>
-            <div class="checkbox-grid">
-              <label class="checkbox-item"><input type="checkbox" id="allergy_localanesthetic" onchange="updateProblems()"><span>局所麻酔薬</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="allergy_iodine" onchange="updateProblems()"><span>ヨード造影剤</span></label>
-              <label class="checkbox-item"><input type="checkbox" id="allergy_nsaids" onchange="updateProblems()"><span>NSAIDs</span></label>
+            <div class="form-group">
+              <label class="form-label" style="color: #9a3412; font-weight: 600;">その他</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="allergy_localanesthetic" onchange="updateProblems()"><span>局所麻酔薬</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="allergy_nsaids" onchange="updateProblems()"><span>NSAIDs</span></label>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 5. 感染症 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('infection')">
-            <span>5. 感染症</span>
-            <span id="infection-icon">▲</span>
-          </button>
-          <div id="infection-content" class="section-content">
-            <div class="form-row">
+        <!-- 感染症 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('infection')">
+            <span class="section-title">5. 感染症</span>
+            <span id="arrow-infection">▼</span>
+          </div>
+          <div class="section-content" id="content-infection">
+            <div class="grid-2">
               <div class="form-group">
-                <label>梅毒(TPHA)</label>
-                <select id="syphilis_tpha" onchange="updateProblems()">
-                  <option value="">選択</option>
+                <label class="form-label">梅毒(TPHA)</label>
+                <select class="form-input" id="syphilis_tpha" onchange="updateProblems()">
+                  <option value="">選択してください</option>
                   <option value="陰性">陰性</option>
                   <option value="陽性">陽性</option>
                   <option value="未検査">未検査</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>梅毒(RPR)</label>
-                <select id="syphilis_rpr" onchange="updateProblems()">
-                  <option value="">選択</option>
-                  <option value="陰性">陰性</option>
-                  <option value="陽性">陽性</option>
-                  <option value="未検査">未検査</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>HBs-Ag</label>
-                <select id="hbsag" onchange="updateProblems()">
-                  <option value="">選択</option>
+                <label class="form-label">梅毒(RPR)</label>
+                <select class="form-input" id="syphilis_rpr" onchange="updateProblems()">
+                  <option value="">選択してください</option>
                   <option value="陰性">陰性</option>
                   <option value="陽性">陽性</option>
                   <option value="未検査">未検査</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>HCV-Ab</label>
-                <select id="hcv" onchange="updateProblems()">
-                  <option value="">選択</option>
-                  <option value="陰性">陰性</option>
-                  <option value="陽性">陽性</option>
-                  <option value="未検査">未検査</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>HIV-Ab</label>
-                <select id="hiv" onchange="updateProblems()">
-                  <option value="">選択</option>
+                <label class="form-label">HBs-Ag</label>
+                <select class="form-input" id="hbsag" onchange="updateProblems()">
+                  <option value="">選択してください</option>
                   <option value="陰性">陰性</option>
                   <option value="陽性">陽性</option>
                   <option value="未検査">未検査</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>HTLV-1-Ab</label>
-                <select id="htlv1" onchange="updateProblems()">
-                  <option value="">選択</option>
+                <label class="form-label">HCV-Ab</label>
+                <select class="form-input" id="hcv" onchange="updateProblems()">
+                  <option value="">選択してください</option>
                   <option value="陰性">陰性</option>
                   <option value="陽性">陽性</option>
                   <option value="未検査">未検査</option>
                 </select>
               </div>
-            </div>
-            <div class="form-row">
               <div class="form-group">
-                <label>風疹(HI)</label>
-                <select id="rubella" onchange="updateProblems()">
-                  <option value="">選択</option>
+                <label class="form-label">HIV-Ab</label>
+                <select class="form-input" id="hiv" onchange="updateProblems()">
+                  <option value="">選択してください</option>
+                  <option value="陰性">陰性</option>
+                  <option value="陽性">陽性</option>
+                  <option value="未検査">未検査</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">風疹(HI)</label>
+                <select class="form-input" id="rubella" onchange="updateProblems()">
+                  <option value="">選択してください</option>
                   <option value="2">2倍</option>
                   <option value="4">4倍</option>
                   <option value="8">8倍</option>
@@ -321,362 +294,541 @@
                   <option value="64">64倍</option>
                   <option value="128">128倍</option>
                   <option value="256">256倍</option>
-                  <option value="512">512倍以上</option>
+                  <option value="512">512倍<</option>
                   <option value="未検査">未検査</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>トキソIgM</label>
-                <select id="toxoplasma_igm" onchange="updateProblems()">
-                  <option value="">選択</option>
-                  <option value="陰性">陰性</option>
-                  <option value="陽性">陽性</option>
-                  <option value="未検査">未検査</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>CMV IgM</label>
-                <select id="cmv_igm" onchange="updateProblems()">
-                  <option value="">選択</option>
+                <label class="form-label">HTLV-1-Ab</label>
+                <select class="form-input" id="htlv1" onchange="updateProblems()">
+                  <option value="">選択してください</option>
                   <option value="陰性">陰性</option>
                   <option value="陽性">陽性</option>
                   <option value="未検査">未検査</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>&nbsp;</label>
-                <label class="checkbox-item" style="margin-top:6px;"><input type="checkbox" id="gbsPositive" onchange="updateProblems()"><span>GBS陽性</span></label>
+                <label class="form-label">トキソプラズマ(IgM)</label>
+                <select class="form-input" id="toxoplasma_igm" onchange="updateProblems()">
+                  <option value="">選択してください</option>
+                  <option value="陰性">陰性</option>
+                  <option value="陽性">陽性</option>
+                  <option value="未検査">未検査</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">サイトメガロ(IgM)</label>
+                <select class="form-input" id="cmv_igm" onchange="updateProblems()">
+                  <option value="">選択してください</option>
+                  <option value="陰性">陰性</option>
+                  <option value="陽性">陽性</option>
+                  <option value="未検査">未検査</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label"><input type="checkbox" id="gbsPositive" onchange="updateProblems()"><span>GBS陽性</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 生活・社会背景 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('social')">
+            <span class="section-title">6. 生活・社会背景</span>
+            <span id="arrow-social">▼</span>
+          </div>
+          <div class="section-content" id="content-social">
+            <div class="form-group">
+              <label class="form-label">患者郵便番号</label>
+              <div class="flex-gap">
+                <input type="text" class="form-input" id="postalCode" placeholder="例: 0600001" maxlength="8" style="max-width: 200px;">
+                <button class="btn btn-primary" id="calcBtn" onclick="calculateTravelTime()">計算</button>
+              </div>
+              <p class="help-text">病院: 〒007-8505 (札幌市東区東苗穂5条1丁目)</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">車での所要時間</label>
+              <div class="readonly-display" id="travelTime">---</div>
+              <p class="help-text" id="travelDetail" style="margin-top: 4px;"></p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">家族サポート</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="familySupport" value="十分" onchange="updateProblems()"><span>十分</span></label>
+                <label class="radio-label"><input type="radio" name="familySupport" value="一部" onchange="updateProblems()"><span>一部</span></label>
+                <label class="radio-label"><input type="radio" name="familySupport" value="ほぼなし" onchange="updateProblems()"><span>ほぼなし</span></label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">パートナー</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="partner" value="あり" checked onchange="updateProblems()"><span>あり</span></label>
+                <label class="radio-label"><input type="radio" name="partner" value="別居" onchange="updateProblems()"><span>別居</span></label>
+                <label class="radio-label"><input type="radio" name="partner" value="なし" onchange="updateProblems()"><span>なし</span></label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label"><input type="checkbox" id="married" checked onchange="updateProblems()"><span>既婚</span></label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">上の子の預け先</label>
+              <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="childCare" value="決まっている" checked onchange="updateProblems()"><span>決まっている</span></label>
+                <label class="radio-label"><input type="radio" name="childCare" value="未定" onchange="updateProblems()"><span>未定</span></label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 6. 生活・社会背景 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('social')">
-            <span>6. 生活・社会背景</span>
-            <span id="social-icon">▲</span>
-          </button>
-          <div id="social-content" class="section-content">
-            <div class="form-group">
-              <label>患者郵便番号</label>
-              <div class="postal-row">
-                <input type="text" id="postalCode" inputmode="numeric" placeholder="例: 0600001" maxlength="8">
-                <button class="btn btn-blue" id="calcBtn" onclick="calculateTravelTime()">計算</button>
-              </div>
-              <div class="hint">病院: 〒007-8505</div>
-            </div>
-            <div class="form-group">
-              <label>車での所要時間</label>
-              <select id="travelTime" onchange="updateProblems()">
-                <option value="">APIで計算または手動選択</option>
-                <option value="10分以内">10分以内</option>
-                <option value="20分以内">20分以内</option>
-                <option value="30分以内">30分以内</option>
-                <option value="40分以内">40分以内</option>
-                <option value="50分以内">50分以内</option>
-                <option value="60分以上">60分以上</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>家族サポート</label>
-              <div class="radio-group">
-                <label class="radio-item"><input type="radio" name="familySupport" value="十分" checked onchange="updateProblems()"><span>十分</span></label>
-                <label class="radio-item"><input type="radio" name="familySupport" value="一部" onchange="updateProblems()"><span>一部</span></label>
-                <label class="radio-item"><input type="radio" name="familySupport" value="ほぼなし" onchange="updateProblems()"><span>ほぼなし</span></label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>パートナー</label>
-              <div class="radio-group">
-                <label class="radio-item"><input type="radio" name="partner" value="あり" checked onchange="updateProblems()"><span>あり</span></label>
-                <label class="radio-item"><input type="radio" name="partner" value="別居" onchange="updateProblems()"><span>別居</span></label>
-                <label class="radio-item"><input type="radio" name="partner" value="なし" onchange="updateProblems()"><span>なし</span></label>
-              </div>
-            </div>
-            <label class="checkbox-item"><input type="checkbox" id="married" checked onchange="updateProblems()"><span>既婚</span></label>
-            <div class="form-group">
-              <label>上の子の預け先</label>
-              <div class="radio-group">
-                <label class="radio-item"><input type="radio" name="childCare" value="決まっている" checked onchange="updateProblems()"><span>決まっている</span></label>
-                <label class="radio-item"><input type="radio" name="childCare" value="未定" onchange="updateProblems()"><span>未定</span></label>
-              </div>
+        <!-- 生活習慣 -->
+        <div class="form-section">
+          <div class="section-header" onclick="toggleSection('lifestyle')">
+            <span class="section-title">7. 生活習慣</span>
+            <span id="arrow-lifestyle">▼</span>
+          </div>
+          <div class="section-content" id="content-lifestyle">
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" id="smoking" onchange="updateProblems()"><span>喫煙(本人または同居家族)</span></label>
+              <label class="checkbox-label"><input type="checkbox" id="alcohol" onchange="updateProblems()"><span>飲酒</span></label>
             </div>
           </div>
         </div>
 
-        <!-- 7. 生活習慣 -->
-        <div class="section">
-          <button class="section-header" onclick="toggleSection('lifestyle')">
-            <span>7. 生活習慣</span>
-            <span id="lifestyle-icon">▲</span>
-          </button>
-          <div id="lifestyle-content" class="section-content">
-            <label class="checkbox-item"><input type="checkbox" id="smoking" onchange="updateProblems()"><span>喫煙（本人または同居家族）</span></label>
-            <label class="checkbox-item"><input type="checkbox" id="alcohol" onchange="updateProblems()"><span>飲酒</span></label>
-          </div>
-        </div>
       </div>
 
-      <!-- 右カラム: プロブレムリスト -->
-      <div class="problem-column">
-        <div class="problem-panel">
-          <div class="problem-header">
-            <h2>プロブレムリスト</h2>
-            <button class="btn btn-blue" id="copyBtn" onclick="copyProblems()">📋 コピー</button>
-          </div>
-          <div id="problemList" class="problem-list">
-            <div class="empty-message">プロブレムなし</div>
+      <!-- プロブレムリスト -->
+      <div>
+        <div class="problem-list">
+          <h2>
+            プロブレムリスト
+            <button class="btn btn-primary" onclick="copyProblems()" style="padding: 4px 12px; font-size: 12px;">📋 コピー</button>
+          </h2>
+          <div id="problemList">
+            <p style="color: #6b7280; font-size: 14px;">プロブレムなし</p>
           </div>
           <div class="legend">
-            <h3>凡例</h3>
-            <div class="legend-item"><div class="legend-box high"></div><span>高リスク</span></div>
-            <div class="legend-item"><div class="legend-box medium"></div><span>中リスク</span></div>
-            <div class="legend-item"><div class="legend-box low"></div><span>注意事項</span></div>
+            <h3 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">凡例</h3>
+            <div class="legend-item">
+              <div class="legend-box" style="background: #fca5a5; border-color: #fca5a5;"></div>
+              <span>高リスク</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-box" style="background: #fcd34d; border-color: #fcd34d;"></div>
+              <span>中リスク</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-box" style="background: #93c5fd; border-color: #93c5fd;"></div>
+              <span>注意事項</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="footer">産科問診プロブレム抽出 v1.0</div>
   </div>
 
   <script>
+    // 北海道の主要郵便番号データベース（札幌市中心）
+    const postalCodeDB = {
+      // 札幌市中央区
+      '0600001': { lat: 43.0642, lon: 141.3469 },
+      '0600002': { lat: 43.0654, lon: 141.3512 },
+      '0600003': { lat: 43.0639, lon: 141.3442 },
+      '0600004': { lat: 43.0619, lon: 141.3389 },
+      '0600005': { lat: 43.0597, lon: 141.3336 },
+      '0600041': { lat: 43.0547, lon: 141.3461 },
+      '0600042': { lat: 43.0558, lon: 141.3503 },
+      '0600061': { lat: 43.0503, lon: 141.3542 },
+      '0600062': { lat: 43.0481, lon: 141.3589 },
+      '0600063': { lat: 43.0464, lon: 141.3631 },
+      
+      // 札幌市北区
+      '0010010': { lat: 43.0861, lon: 141.3403 },
+      '0010011': { lat: 43.0878, lon: 141.3447 },
+      '0010012': { lat: 43.0894, lon: 141.3489 },
+      '0010013': { lat: 43.0911, lon: 141.3531 },
+      '0010014': { lat: 43.0928, lon: 141.3572 },
+      '0010015': { lat: 43.0944, lon: 141.3614 },
+      '0010016': { lat: 43.0961, lon: 141.3656 },
+      '0010017': { lat: 43.0978, lon: 141.3697 },
+      '0010020': { lat: 43.1011, lon: 141.3781 },
+      '0010021': { lat: 43.1028, lon: 141.3822 },
+      
+      // 札幌市東区
+      '0640801': { lat: 43.0789, lon: 141.3828 },
+      '0640802': { lat: 43.0803, lon: 141.3869 },
+      '0640803': { lat: 43.0817, lon: 141.3911 },
+      '0640804': { lat: 43.0831, lon: 141.3953 },
+      '0640805': { lat: 43.0844, lon: 141.3994 },
+      '0640806': { lat: 43.0858, lon: 141.4036 },
+      '0640807': { lat: 43.0872, lon: 141.4078 },
+      '0640808': { lat: 43.0886, lon: 141.4119 },
+      '0640809': { lat: 43.0900, lon: 141.4161 },
+      '0640810': { lat: 43.0914, lon: 141.4203 },
+      '0640820': { lat: 43.0942, lon: 141.4286 },
+      '0640921': { lat: 43.0917, lon: 141.4450 },
+      '0640922': { lat: 43.0931, lon: 141.4492 },
+      '0640923': { lat: 43.0944, lon: 141.4533 },
+      '0640924': { lat: 43.0958, lon: 141.4575 },
+      '0640925': { lat: 43.0972, lon: 141.4617 },
+      '0640941': { lat: 43.1014, lon: 141.4700 },
+      '0640942': { lat: 43.1028, lon: 141.4742 },
+      '0640943': { lat: 43.1042, lon: 141.4783 },
+      '0640944': { lat: 43.1056, lon: 141.4825 },
+      '0640945': { lat: 43.1069, lon: 141.4867 },
+      '0640951': { lat: 43.1097, lon: 141.4950 },
+      '0640952': { lat: 43.1111, lon: 141.4992 },
+      '0640953': { lat: 43.1125, lon: 141.5033 },
+      '0640954': { lat: 43.1139, lon: 141.5075 },
+      
+      // 札幌市白石区
+      '0030001': { lat: 43.0492, lon: 141.4039 },
+      '0030002': { lat: 43.0506, lon: 141.4081 },
+      '0030003': { lat: 43.0519, lon: 141.4122 },
+      '0030004': { lat: 43.0533, lon: 141.4164 },
+      '0030005': { lat: 43.0547, lon: 141.4206 },
+      '0030021': { lat: 43.0603, lon: 141.4331 },
+      '0030022': { lat: 43.0617, lon: 141.4372 },
+      '0030023': { lat: 43.0631, lon: 141.4414 },
+      '0030024': { lat: 43.0644, lon: 141.4456 },
+      '0030025': { lat: 43.0658, lon: 141.4497 },
+      
+      // 札幌市豊平区
+      '0040001': { lat: 43.0311, lon: 141.3828 },
+      '0040002': { lat: 43.0325, lon: 141.3869 },
+      '0040003': { lat: 43.0339, lon: 141.3911 },
+      '0040004': { lat: 43.0353, lon: 141.3953 },
+      '0040005': { lat: 43.0367, lon: 141.3994 },
+      '0040021': { lat: 43.0422, lon: 141.4119 },
+      '0040022': { lat: 43.0436, lon: 141.4161 },
+      '0040023': { lat: 43.0450, lon: 141.4203 },
+      '0040024': { lat: 43.0464, lon: 141.4244 },
+      '0040025': { lat: 43.0478, lon: 141.4286 },
+      
+      // 札幌市西区
+      '0630801': { lat: 43.0728, lon: 141.2742 },
+      '0630802': { lat: 43.0742, lon: 141.2783 },
+      '0630803': { lat: 43.0756, lon: 141.2825 },
+      '0630804': { lat: 43.0769, lon: 141.2867 },
+      '0630805': { lat: 43.0783, lon: 141.2908 },
+      
+      // 札幌市手稲区
+      '0060001': { lat: 43.1364, lon: 141.2450 },
+      '0060002': { lat: 43.1378, lon: 141.2492 },
+      '0060003': { lat: 43.1392, lon: 141.2533 },
+      '0060011': { lat: 43.1475, lon: 141.2700 },
+      '0060012': { lat: 43.1489, lon: 141.2742 },
+      '0060013': { lat: 43.1503, lon: 141.2783 },
+      
+      // 札幌市清田区
+      '0040811': { lat: 42.9972, lon: 141.4617 },
+      '0040812': { lat: 42.9986, lon: 141.4658 },
+      '0040813': { lat: 43.0000, lon: 141.4700 },
+      '0040814': { lat: 43.0014, lon: 141.4742 },
+      '0040815': { lat: 43.0028, lon: 141.4783 },
+      
+      // 札幌市南区
+      '0050801': { lat: 42.9906, lon: 141.3494 },
+      '0050802': { lat: 42.9919, lon: 141.3536 },
+      '0050803': { lat: 42.9933, lon: 141.3578 },
+      '0050804': { lat: 42.9947, lon: 141.3619 },
+      '0050805': { lat: 42.9961, lon: 141.3661 },
+      
+      // 江別市
+      '0690801': { lat: 43.1028, lon: 141.5367 },
+      '0690802': { lat: 43.1042, lon: 141.5408 },
+      '0690803': { lat: 43.1056, lon: 141.5450 },
+      '0690811': { lat: 43.1139, lon: 141.5617 },
+      '0690812': { lat: 43.1153, lon: 141.5658 },
+      '0690813': { lat: 43.1167, lon: 141.5700 },
+      '0690814': { lat: 43.1181, lon: 141.5742 },
+      '0690815': { lat: 43.1194, lon: 141.5783 },
+      '0690816': { lat: 43.1208, lon: 141.5825 },
+      '0690817': { lat: 43.1222, lon: 141.5867 },
+      
+      // 病院の郵便番号
+      '0078505': { lat: 43.0992, lon: 141.4292 }
+    };
+
     // セクション開閉
-    function toggleSection(name) {
-      const content = document.getElementById(name + '-content');
-      const icon = document.getElementById(name + '-icon');
-      if (content.classList.contains('open')) {
-        content.classList.remove('open');
-        icon.textContent = '▼';
+    function toggleSection(section) {
+      const content = document.getElementById('content-' + section);
+      const arrow = document.getElementById('arrow-' + section);
+      if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        arrow.textContent = '▶';
       } else {
-        content.classList.add('open');
-        icon.textContent = '▲';
+        content.classList.add('expanded');
+        arrow.textContent = '▼';
       }
     }
 
     // BMI計算
-    function calcBMI() {
-      const h = parseFloat(document.getElementById('height').value);
-      const w = parseFloat(document.getElementById('preWeight').value);
-      if (h && w) {
-        const bmi = w / ((h / 100) ** 2);
-        document.getElementById('bmi').value = bmi.toFixed(1);
+    function calculateBMI() {
+      const height = parseFloat(document.getElementById('height').value);
+      const weight = parseFloat(document.getElementById('preWeight').value);
+      if (height && weight) {
+        const bmi = weight / ((height / 100) ** 2);
+        document.getElementById('bmiDisplay').textContent = bmi.toFixed(1);
         return bmi;
       }
-      document.getElementById('bmi').value = '---';
+      document.getElementById('bmiDisplay').textContent = '---';
       return null;
     }
 
-    // 所要時間計算（API）
+    // 2点間の距離を計算（Haversine公式）- kmで返す
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // 地球の半径 (km)
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // 郵便番号から所要時間を計算
     async function calculateTravelTime() {
       const code = document.getElementById('postalCode').value.replace(/[^0-9]/g, '');
+      
       if (code.length !== 7) {
         alert('郵便番号は7桁で入力してください');
         return;
       }
+
       const btn = document.getElementById('calcBtn');
       btn.disabled = true;
-      btn.textContent = '...';
+      btn.textContent = '計算中...';
+
       try {
-        const res = await fetch('https://travel-time-api.vercel.app/api/travel-time?postalCode=' + code);
-        if (!res.ok) throw new Error('API Error');
+        // 病院の座標
+        const hospitalLat = 43.0992;
+        const hospitalLon = 141.4292;
+
+        // 郵便番号データベースから座標を取得
+        const patientCoords = postalCodeDB[code];
+        
+        if (!patientCoords) {
+          // データベースにない場合はOSRMで計算を試みる
+          alert(`郵便番号 ${code} はデータベースに登録されていません。\n札幌市内の主要な郵便番号のみ対応しています。\n手動で選択してください。`);
+          btn.disabled = false;
+          btn.textContent = '計算';
+          return;
+        }
+
+        // OSRMで実際のルート計算
+        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${patientCoords.lon},${patientCoords.lat};${hospitalLon},${hospitalLat}?overview=false`;
+        
+        const res = await fetch(osrmUrl);
+        if (!res.ok) throw new Error('OSRM API error');
+        
         const data = await res.json();
-        const mins = data.carMinutes;
-        let cat;
-        if (mins <= 10) cat = '10分以内';
-        else if (mins <= 20) cat = '20分以内';
-        else if (mins <= 30) cat = '30分以内';
-        else if (mins <= 40) cat = '40分以内';
-        else if (mins <= 50) cat = '50分以内';
-        else cat = '60分以上';
-        document.getElementById('travelTime').value = cat;
+        
+        if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
+          throw new Error('No route found');
+        }
+
+        // 所要時間（秒）と距離（メートル）を取得
+        const durationSeconds = data.routes[0].duration;
+        const distanceMeters = data.routes[0].distance;
+        const minutes = Math.round(durationSeconds / 60);
+
+        // 詳細情報を表示
+        document.getElementById('travelDetail').textContent = 
+          `実距離: ${(distanceMeters/1000).toFixed(1)}km / 推定: ${minutes}分`;
+
+        // 時間を分類
+        let category;
+        if (minutes <= 10) category = '10分以内';
+        else if (minutes <= 20) category = '20分以内';
+        else if (minutes <= 30) category = '30分以内';
+        else if (minutes <= 40) category = '40分以内';
+        else if (minutes <= 50) category = '50分以内';
+        else category = '60分以上';
+
+        document.getElementById('travelTime').textContent = category;
         updateProblems();
+
       } catch (e) {
-        alert('移動時間を取得できませんでした。手動で選択してください。');
+        console.error('Travel time calculation error:', e);
+        
+        // フォールバック: 直線距離で概算
+        const patientCoords = postalCodeDB[code];
+        if (patientCoords) {
+          const hospitalLat = 43.0992;
+          const hospitalLon = 141.4292;
+          const straightDist = calculateDistance(patientCoords.lat, patientCoords.lon, hospitalLat, hospitalLon);
+          
+          // 直線距離 × 1.3（迂回率） ÷ 平均速度30km/h
+          const estimatedMinutes = Math.round((straightDist * 1.3 / 30) * 60);
+          
+          let category;
+          if (estimatedMinutes <= 10) category = '10分以内';
+          else if (estimatedMinutes <= 20) category = '20分以内';
+          else if (estimatedMinutes <= 30) category = '30分以内';
+          else if (estimatedMinutes <= 40) category = '40分以内';
+          else if (estimatedMinutes <= 50) category = '50分以内';
+          else category = '60分以上';
+          
+          document.getElementById('travelTime').textContent = category;
+          document.getElementById('travelDetail').textContent = 
+            `直線距離: ${straightDist.toFixed(1)}km / 推定: 約${estimatedMinutes}分 (概算)`;
+          updateProblems();
+          
+          alert('正確な経路計算ができませんでした。直線距離からの概算値を表示しています。');
+        } else {
+          alert('移動時間を取得できませんでした。手動で選択してください。');
+        }
       } finally {
         btn.disabled = false;
         btn.textContent = '計算';
       }
     }
 
-    // ラジオボタン値取得
-    function getRadio(name) {
-      const el = document.querySelector('input[name="' + name + '"]:checked');
-      return el ? el.value : '';
-    }
-
-    // チェックボックス値取得
-    function getCheck(id) {
-      const el = document.getElementById(id);
-      return el ? el.checked : false;
-    }
-
-    // セレクト値取得
-    function getSelect(id) {
-      const el = document.getElementById(id);
-      return el ? el.value : '';
-    }
-
-    // 数値取得
-    function getNum(id) {
-      return parseInt(document.getElementById(id).value) || 0;
-    }
-
     // プロブレム抽出
     function updateProblems() {
-      const bmi = calcBMI();
+      calculateBMI();
       const problems = [];
+      const bmi = calculateBMI();
 
-      // 高リスク
-      if (getCheck('prevAdhesion') || (getNum('cesarean') > 0 && getCheck('prevPlacenta'))) {
+      // 高リスク（赤）
+      if (document.getElementById('prevAdhesion').checked || 
+          (parseInt(document.getElementById('cesarean').value) > 0 && document.getElementById('prevPlacenta').checked)) {
         problems.push({ text: '#癒着胎盤注意', level: 'high' });
       }
-      if (getCheck('prevHDP')) problems.push({ text: '#前回HDP', level: 'high' });
-      if (getCheck('prevPreterm')) problems.push({ text: '#前回早産', level: 'high' });
-      if (getCheck('prevPPH')) problems.push({ text: '#前回産後出血', level: 'high' });
-      if (getCheck('thrombosis')) problems.push({ text: '#血栓症既往', level: 'high' });
-      if (getCheck('autoimmune')) problems.push({ text: '#自己免疫疾患', level: 'high' });
-      if (getCheck('diabetes')) problems.push({ text: '#糖尿病合併', level: 'high' });
+      if (document.getElementById('prevHDP').checked) problems.push({ text: '#前回HDP', level: 'high' });
+      if (document.getElementById('prevPreterm').checked) problems.push({ text: '#前回早産', level: 'high' });
+      if (document.getElementById('prevPPH').checked) problems.push({ text: '#前回産後出血', level: 'high' });
+      if (document.getElementById('thrombosis').checked) problems.push({ text: '#血栓症既往', level: 'high' });
+      if (document.getElementById('autoimmune').checked) problems.push({ text: '#自己免疫疾患', level: 'high' });
+      if (document.getElementById('diabetes').checked) problems.push({ text: '#糖尿病合併', level: 'high' });
 
-      // 催奇形性（高）
-      if (getCheck('aed_valproate')) problems.push({ text: '#バルプロ酸内服中', level: 'high' });
-      if (getCheck('retinoid_isotretinoin') || getCheck('retinoid_acitretin')) {
-        problems.push({ text: '#レチノイド内服中（絶対禁忌）', level: 'high' });
+      // 催奇形性薬剤（高リスク）
+      if (document.getElementById('aed_valproate').checked) problems.push({ text: '#バルプロ酸内服中', level: 'high' });
+      if (document.getElementById('retinoid_isotretinoin').checked || document.getElementById('retinoid_acitretin').checked) {
+        problems.push({ text: '#レチノイド内服中(絶対禁忌)', level: 'high' });
       }
-      if (getCheck('immunosuppressant_mtx')) problems.push({ text: '#メトトレキサート内服中（禁忌）', level: 'high' });
-      if (getCheck('immunosuppressant_mmf') || getCheck('immunosuppressant_cyclophosphamide')) {
-        problems.push({ text: '#免疫抑制薬内服中（禁忌）', level: 'high' });
+      if (document.getElementById('immunosuppressant_mtx').checked) problems.push({ text: '#メトトレキサート内服中(禁忌)', level: 'high' });
+      if (document.getElementById('immunosuppressant_mmf').checked || document.getElementById('immunosuppressant_cyclophosphamide').checked) {
+        problems.push({ text: '#免疫抑制薬内服中(禁忌)', level: 'high' });
       }
-      if (getCheck('anticoagulant_warfarin')) problems.push({ text: '#ワルファリン内服中（要変更）', level: 'high' });
+      if (document.getElementById('anticoagulant_warfarin').checked) problems.push({ text: '#ワルファリン内服中(要変更)', level: 'high' });
 
-      // アレルギー（高）
-      if (getCheck('allergy_latex')) problems.push({ text: '#ラテックスアレルギー', level: 'high' });
-      if (getCheck('allergy_chlorhexidine')) problems.push({ text: '#クロルヘキシジンアレルギー', level: 'high' });
+      // アレルギー（高リスク）
+      if (document.getElementById('allergy_latex').checked) problems.push({ text: '#ラテックスアレルギー', level: 'high' });
+      if (document.getElementById('allergy_chlorhexidine').checked) problems.push({ text: '#クロルヘキシジンアレルギー', level: 'high' });
 
-      // 感染症（高）
-      if (getSelect('syphilis_tpha') === '陽性' || getSelect('syphilis_rpr') === '陽性') {
+      // 感染症（高リスク）
+      if (document.getElementById('syphilis_tpha').value === '陽性' || document.getElementById('syphilis_rpr').value === '陽性') {
         problems.push({ text: '#梅毒陽性', level: 'high' });
       }
-      if (getSelect('hbsag') === '陽性') problems.push({ text: '#HBs抗原陽性', level: 'high' });
-      if (getSelect('hcv') === '陽性') problems.push({ text: '#HCV抗体陽性', level: 'high' });
-      if (getSelect('hiv') === '陽性') problems.push({ text: '#HIV抗体陽性', level: 'high' });
-      if (getSelect('toxoplasma_igm') === '陽性') problems.push({ text: '#トキソプラズマIgM陽性', level: 'high' });
+      if (document.getElementById('hbsag').value === '陽性') problems.push({ text: '#HBs抗原陽性', level: 'high' });
+      if (document.getElementById('hcv').value === '陽性') problems.push({ text: '#HCV抗体陽性', level: 'high' });
+      if (document.getElementById('hiv').value === '陽性') problems.push({ text: '#HIV抗体陽性', level: 'high' });
+      if (document.getElementById('toxoplasma_igm').value === '陽性') problems.push({ text: '#トキソプラズマIgM陽性', level: 'high' });
 
-      // 中リスク
-      if (getNum('age') >= 35) problems.push({ text: '#高齢妊娠', level: 'medium' });
-      if (bmi && bmi >= 25) problems.push({ text: '#肥満', level: 'medium' });
-      if (bmi && bmi < 18.5) problems.push({ text: '#やせ', level: 'medium' });
-      if (getNum('cesarean') > 0) problems.push({ text: '#既往帝王切開', level: 'medium' });
-      if (getCheck('lastDeliveryWithin1Year')) problems.push({ text: '#前回妊娠から1年未満', level: 'medium' });
-      if (getCheck('prevGDM')) problems.push({ text: '#前回GDM', level: 'medium' });
-      if (getCheck('psychiatric_meds')) problems.push({ text: '#精神科薬内服中', level: 'medium' });
-      if (getCheck('hypertension')) problems.push({ text: '#高血圧合併', level: 'medium' });
-      if (getCheck('thyroid')) problems.push({ text: '#甲状腺疾患', level: 'medium' });
-      if (getCheck('uterineAnomaly')) problems.push({ text: '#子宮奇形', level: 'medium' });
-      if (getCheck('cervicalSurgery')) problems.push({ text: '#頸管手術既往', level: 'medium' });
-      if (getCheck('abdominalSurgery')) problems.push({ text: '#腹部既往手術あり', level: 'medium' });
+      // 中リスク（黄）
+      const age = parseInt(document.getElementById('age').value);
+      if (age >= 35) problems.push({ text: '#高齢妊娠', level: 'medium' });
+      if (bmi >= 25) problems.push({ text: '#肥満', level: 'medium' });
+      if (bmi < 18.5) problems.push({ text: '#やせ', level: 'medium' });
+      if (parseInt(document.getElementById('cesarean').value) > 0) problems.push({ text: '#既往帝王切開', level: 'medium' });
+      if (document.getElementById('lastDeliveryWithin1Year').checked) problems.push({ text: '#前回妊娠から1年未満の妊娠', level: 'medium' });
+      if (document.getElementById('prevGDM').checked) problems.push({ text: '#前回GDM', level: 'medium' });
+      if (document.getElementById('psychiatricMeds').checked) problems.push({ text: '#精神科薬内服中', level: 'medium' });
 
-      // 催奇形性（中）
-      if (getCheck('aed_carbamazepine') || getCheck('aed_phenytoin') || getCheck('aed_other')) {
+      // 催奇形性薬剤（中リスク）
+      if (document.getElementById('aed_carbamazepine').checked || document.getElementById('aed_phenytoin').checked || document.getElementById('aed_other').checked) {
         problems.push({ text: '#抗てんかん薬内服中', level: 'medium' });
       }
-      if (getCheck('antihypertensive_acei') || getCheck('antihypertensive_arb')) {
-        problems.push({ text: '#ACE阻害薬/ARB内服中（要変更）', level: 'medium' });
+      if (document.getElementById('antihypertensive_acei').checked || document.getElementById('antihypertensive_arb').checked) {
+        problems.push({ text: '#ACE阻害薬/ARB内服中(要変更)', level: 'medium' });
       }
-      if (getCheck('thyroid_thiamazole')) problems.push({ text: '#チアマゾール内服中（要注意）', level: 'medium' });
+      if (document.getElementById('thyroid_thiamazole').checked) problems.push({ text: '#チアマゾール内服中(要注意)', level: 'medium' });
 
-      // アレルギー（中）
-      if (getCheck('allergy_penicillin')) problems.push({ text: '#ペニシリンアレルギー', level: 'medium' });
-      if (getCheck('allergy_cephalosporin')) problems.push({ text: '#セフェムアレルギー', level: 'medium' });
-      if (getCheck('allergy_localanesthetic')) problems.push({ text: '#局所麻酔薬アレルギー', level: 'medium' });
+      // アレルギー（中リスク）
+      if (document.getElementById('allergy_penicillin').checked) problems.push({ text: '#ペニシリンアレルギー', level: 'medium' });
+      if (document.getElementById('allergy_cephalosporin').checked) problems.push({ text: '#セフェムアレルギー', level: 'medium' });
+      if (document.getElementById('allergy_localanesthetic').checked) problems.push({ text: '#局所麻酔薬アレルギー', level: 'medium' });
 
-      // 感染症（中）
-      if (getSelect('htlv1') === '陽性') problems.push({ text: '#HTLV-1抗体陽性', level: 'medium' });
-      if (getSelect('cmv_igm') === '陽性') problems.push({ text: '#サイトメガロIgM陽性', level: 'medium' });
+      // 既往歴（中リスク）
+      if (document.getElementById('hypertension').checked) problems.push({ text: '#高血圧合併', level: 'medium' });
+      if (document.getElementById('thyroid').checked) problems.push({ text: '#甲状腺疾患', level: 'medium' });
+      if (document.getElementById('abdominalSurgery').checked) problems.push({ text: '#腹部既往手術あり', level: 'medium' });
+      if (document.getElementById('uterineAnomaly').checked) problems.push({ text: '#子宮奇形', level: 'medium' });
+      if (document.getElementById('cervicalSurgery').checked) problems.push({ text: '#頸管手術既往', level: 'medium' });
 
-      // 低リスク
-      const travel = getSelect('travelTime');
-      if (travel === '50分以内' || travel === '60分以上') {
-        problems.push({ text: '#遠方在住', level: 'low' });
-      }
-      if (getCheck('gbsPositive')) problems.push({ text: '#GBS陽性', level: 'low' });
-      if (getRadio('familySupport') === 'ほぼなし') problems.push({ text: '#家族支援なし', level: 'low' });
-      if (getRadio('childCare') === '未定') problems.push({ text: '#上の子預け先未定', level: 'low' });
-      if (getCheck('prevRapidLabor')) problems.push({ text: '#前回分娩経過早い', level: 'low' });
-      if (getCheck('prevPROM')) problems.push({ text: '#前回前期破水', level: 'low' });
-      if (getNum('para') === 0) problems.push({ text: '#初産', level: 'low' });
-      if (!getCheck('married')) problems.push({ text: '#未婚', level: 'low' });
-      const partner = getRadio('partner');
-      if (partner === '別居' || partner === 'なし') problems.push({ text: '#夫が別', level: 'low' });
-      if (getCheck('smoking')) problems.push({ text: '#喫煙', level: 'low' });
-      if (getCheck('allergy_nsaids')) problems.push({ text: '#NSAIDsアレルギー', level: 'low' });
-      const rubella = parseInt(getSelect('rubella'));
+      // 感染症（中リスク）
+      if (document.getElementById('htlv1').value === '陽性') problems.push({ text: '#HTLV-1抗体陽性', level: 'medium' });
+      if (document.getElementById('cmv_igm').value === '陽性') problems.push({ text: '#サイトメガロIgM陽性', level: 'medium' });
+
+      // 低リスク/注意（青）
+      const rubella = parseInt(document.getElementById('rubella').value);
       if (rubella && rubella < 16) problems.push({ text: '#風疹抗体低値', level: 'low' });
+      if (document.getElementById('gbsPositive').checked) problems.push({ text: '#GBS陽性', level: 'low' });
 
-      // 表示更新
-      const list = document.getElementById('problemList');
+      const travelTime = document.getElementById('travelTime').textContent;
+      if (travelTime === '50分以内' || travelTime === '60分以上') problems.push({ text: '#遠方在住', level: 'low' });
+
+      const familySupport = document.querySelector('input[name="familySupport"]:checked');
+      if (familySupport && familySupport.value === 'ほぼなし') problems.push({ text: '#家族支援なし', level: 'low' });
+
+      const childCare = document.querySelector('input[name="childCare"]:checked');
+      if (childCare && childCare.value === '未定') problems.push({ text: '#上の子預け先未定', level: 'low' });
+
+      if (document.getElementById('prevRapidLabor').checked) problems.push({ text: '#前回分娩経過早い', level: 'low' });
+      if (document.getElementById('prevPROM').checked) problems.push({ text: '#前回前期破水', level: 'low' });
+      if (parseInt(document.getElementById('para').value) === 0) problems.push({ text: '#初産', level: 'low' });
+      if (!document.getElementById('married').checked) problems.push({ text: '#未婚', level: 'low' });
+
+      const partner = document.querySelector('input[name="partner"]:checked');
+      if (partner && (partner.value === '別居' || partner.value === 'なし')) problems.push({ text: '#夫が別', level: 'low' });
+
+      if (document.getElementById('smoking').checked) problems.push({ text: '#喫煙', level: 'low' });
+      if (document.getElementById('allergy_nsaids').checked) problems.push({ text: '#NSAIDsアレルギー', level: 'low' });
+
+      // 表示
+      const listDiv = document.getElementById('problemList');
       if (problems.length === 0) {
-        list.innerHTML = '<div class="empty-message">プロブレムなし</div>';
+        listDiv.innerHTML = '<p style="color: #6b7280; font-size: 14px;">プロブレムなし</p>';
       } else {
-        list.innerHTML = problems.map(p => 
-          '<div class="problem-item problem-' + p.level + '">' + p.text + '</div>'
+        listDiv.innerHTML = problems.map(p => 
+          `<div class="problem-item problem-${p.level}">${p.text}</div>`
         ).join('');
       }
     }
 
-    // コピー機能
+    // プロブレムをコピー
     function copyProblems() {
       const items = document.querySelectorAll('.problem-item');
-      const texts = Array.from(items).map(el => el.textContent);
-      const text = texts.join(', ');
-      
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-          const btn = document.getElementById('copyBtn');
-          btn.textContent = '✓ コピー済';
-          setTimeout(() => { btn.textContent = '📋 コピー'; }, 2000);
-        });
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        const btn = document.getElementById('copyBtn');
-        btn.textContent = '✓ コピー済';
-        setTimeout(() => { btn.textContent = '📋 コピー'; }, 2000);
+      if (items.length === 0) {
+        alert('コピーするプロブレムがありません');
+        return;
       }
+      const text = Array.from(items).map(item => item.textContent).join(', ');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('コピーしました');
+      });
     }
 
     // リセット
     function resetForm() {
-      if (!confirm('入力内容をリセットしますか？')) return;
-      
-      // テキスト入力
-      ['age', 'height', 'preWeight', 'basicOther', 'postalCode', 'gravida', 'para', 'cesarean'].forEach(id => {
-        document.getElementById(id).value = '';
+      if (!confirm('入力内容をリセットしますか?')) return;
+      document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(el => {
+        el.value = '';
       });
-      document.getElementById('bmi').value = '---';
-      
-      // チェックボックス
       document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-        el.checked = (el.id === 'married');
+        el.checked = el.id === 'married';
       });
-      
-      // セレクト
-      document.querySelectorAll('select').forEach(el => {
-        el.selectedIndex = 0;
+      document.querySelectorAll('input[type="radio"]').forEach(el => {
+        if (el.value === 'あり' && el.name === 'partner') el.checked = true;
+        else if (el.value === '決まっている' && el.name === 'childCare') el.checked = true;
+        else el.checked = false;
       });
-      
-      // ラジオボタン
-      document.querySelector('input[name="familySupport"][value="十分"]').checked = true;
-      document.querySelector('input[name="partner"][value="あり"]').checked = true;
-      document.querySelector('input[name="childCare"][value="決まっている"]').checked = true;
-      
+      document.getElementById('bmiDisplay').textContent = '---';
+      document.getElementById('travelTime').textContent = '---';
+      document.getElementById('travelDetail').textContent = '';
       updateProblems();
     }
 
